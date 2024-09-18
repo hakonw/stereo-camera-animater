@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
+import os
 
-def find_points():
+def find_points(show_results=False):
     # Load the 4 extracted images
     images = [cv2.imread(f'splitted/image_{i + 1}.jpg') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
@@ -22,6 +23,8 @@ def find_points():
     # Mouse callback to capture the clicked point
     selected_point = None
 
+    # Create directory to save result images if it doesn't exist
+    os.makedirs('spotted', exist_ok=True)
 
     def select_point(event, x, y, flags, param):
         nonlocal selected_point
@@ -32,7 +35,7 @@ def find_points():
             selected_point = (orig_x, orig_y)
 
             # Draw a red dot on the selected point and a rectangle around the ROI in the resized image
-            cv2.circle(resized_images[0], (x, y), 5, (0, 0, 255), -1)
+            cv2.circle(resized_images[0], (x, y), 2, (0, 0, 255), -1)
             cv2.rectangle(resized_images[0], (x - scaled_roi_size // 2, y - scaled_roi_size // 2),
                           (x + scaled_roi_size // 2, y + scaled_roi_size // 2), (0, 255, 0), 2)
             cv2.imshow('Image 1', resized_images[0])
@@ -41,6 +44,9 @@ def find_points():
     cv2.imshow('Image 1', resized_images[0])
     cv2.setMouseCallback('Image 1', select_point)
     cv2.waitKey(0)
+
+    # Write to spotted for debugging
+    cv2.imwrite(f'spotted/result_image_0.jpg', resized_images[0])
 
     if selected_point is None:
         raise Exception("No point selected")
@@ -51,19 +57,13 @@ def find_points():
     y_start, y_end = max(0, y - roi_size // 2), min(h, y + roi_size // 2)
     roi = images[0][y_start:y_end, x_start:x_end]
 
-    # Resize ROI for consistency with the original images
-    roi_resized = cv2.resize(roi, (scaled_roi_size, scaled_roi_size))
-
     # Initialize list to store match results
     match_results = []
 
     # Template matching to find the best match in other images
     for i in range(1, 4):
-        # Resize the image for consistency
-        resized_image = cv2.resize(images[i], (int(w * scale_factor), int(h * scale_factor)))
-
-        # Perform template matching
-        result = cv2.matchTemplate(resized_image, roi_resized, cv2.TM_CCOEFF_NORMED)
+        # Perform template matching on the original image
+        result = cv2.matchTemplate(images[i], roi, cv2.TM_CCOEFF_NORMED)
 
         # Find the location with the highest match value
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
@@ -74,7 +74,7 @@ def find_points():
     focus_points = [selected_point]  # Include the manually selected focus point
     for i, match_point in match_results:
         # Draw a rectangle around the best match and a dot on the best match point
-        top_left = (int(match_point[0] / scale_factor), int(match_point[1] / scale_factor))
+        top_left = match_point
         bottom_right = (top_left[0] + roi_size, top_left[1] + roi_size)
         cv2.rectangle(original_images[i], top_left, bottom_right, (0, 255, 0), 10)
         cv2.circle(original_images[i], (top_left[0] + roi_size // 2, top_left[1] + roi_size // 2), 5, (0, 0, 255), -1)
@@ -84,7 +84,14 @@ def find_points():
 
         # Resize the result image for display
         result_image = cv2.resize(original_images[i], (int(w * scale_factor), int(h * scale_factor)))
-        cv2.imshow(f'Result Image {i + 1}', result_image)
+        if show_results:
+            cv2.imshow(f'Result Image {i + 1}', result_image)
+
+        # Save the result image to 'spotted/' directory
+        cv2.imwrite(f'spotted/result_image_{i + 1}.jpg', original_images[i])
+        # cv2.imwrite(f'splitted/image_{i + 1}.jpg', original_images[i])
+
+    if show_results:
         cv2.waitKey(0)
 
     # Print all focus points in the required list format
