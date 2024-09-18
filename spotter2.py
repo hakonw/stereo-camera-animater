@@ -2,7 +2,16 @@ import cv2
 import numpy as np
 import os
 
-def find_points(show_results=False):
+def check_difference(points):
+    max_limit = 200
+    points = np.array(points)
+    x_diff = np.abs(points[:, None, 0] - points[None, :, 0])
+    y_diff = np.abs(points[:, None, 1] - points[None, :, 1])
+
+    over_limit = (x_diff > max_limit) | (y_diff > max_limit)
+    return np.any(over_limit)
+
+def find_points(show_results=False, debug=False):
     # Load the 4 extracted images
     images = [cv2.imread(f'splitted/image_{i + 1}.jpg') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
@@ -57,6 +66,12 @@ def find_points(show_results=False):
     y_start, y_end = max(0, y - roi_size // 2), min(h, y + roi_size // 2)
     roi = images[0][y_start:y_end, x_start:x_end]
 
+    if debug:
+        cv2.circle(original_images[0], (x, y), 5, (0, 0, 255), -1)
+        cv2.rectangle(original_images[0], (x - roi_size // 2, y - roi_size // 2),
+                      (x + roi_size // 2, y + roi_size // 2), (0, 255, 0), 10)
+        cv2.imwrite(f'splitted/image_1.jpg', original_images[0])
+
     # Initialize list to store match results
     match_results = []
 
@@ -89,7 +104,8 @@ def find_points(show_results=False):
 
         # Save the result image to 'spotted/' directory
         cv2.imwrite(f'spotted/result_image_{i + 1}.jpg', original_images[i])
-        # cv2.imwrite(f'splitted/image_{i + 1}.jpg', original_images[i])
+        if debug:
+            cv2.imwrite(f'splitted/image_{i + 1}.jpg', original_images[i])
 
     if show_results:
         cv2.waitKey(0)
