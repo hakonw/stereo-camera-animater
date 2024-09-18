@@ -43,16 +43,13 @@ def translate_image_to_focus_point(focus_points):
 
         # Calculate padding
         if width < max_width:
-            left = (max_width - width) // 2
-            right = max_width - width - left
+            right = max_width - width
         if height < max_height:
-            top = (max_height - height) // 2
-            bottom = max_height - height - top
+            bottom = max_height - height
 
         # Pad the image
         padded_img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(0, 0, 0))
         return padded_img
-
 
     # Set the target size to the largest dimensions found
     max_width = max(img.shape[1] for img in translated_images)
