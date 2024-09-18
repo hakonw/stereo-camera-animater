@@ -1,0 +1,10 @@
+# Files
+*.jpg
+*.avi
+
+# Folders
+.idea
+old
+splitted
+translated
+__pycache__/
