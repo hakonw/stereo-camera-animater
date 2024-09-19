@@ -15,57 +15,98 @@ def translate_image_to_focus_point(focus_points):
     # Define the target focus point (use the first focus point)
     target_focus_point = focus_points[0]
 
-    # Function to translate the image
-    # TODO BILDE MÅ IKKE CROPPES ;/ må heller padde alle andre..
-    # Må kanskje regne ut det da... og padde før flytte
-    def translate_image(img, focus_point, target_point):
-        tx = target_point[0] - focus_point[0]
-        ty = target_point[1] - focus_point[1]
+    # Calculate translation offsets and determine maximum padding required
+    min_tx = min_ty = 0
+    max_tx = max_ty = 0
+    translations = []
+
+    for focus_point in focus_points:
+        # Calculate translation offsets
+        tx = target_focus_point[0] - focus_point[0]
+        ty = target_focus_point[1] - focus_point[1]
+        translations.append((tx, ty))
+
+        # Update min and max translation values
+        min_tx = min(min_tx, tx)
+        max_tx = max(max_tx, tx)
+        min_ty = min(min_ty, ty)
+        max_ty = max(max_ty, ty)
+
+    # Define the padding values based on the max shifts calculated
+    padding_left = -min_tx
+    padding_right = max_tx
+    padding_top = -min_ty
+    padding_bottom = max_ty
+
+    # Function to pad and translate an image to ensure focus points are aligned correctly
+    def pad_and_translate_image(img, tx, ty):
+        # Pad the image with the calculated padding
+        padded_img = cv2.copyMakeBorder(
+            img,
+            padding_top,
+            padding_bottom,
+            padding_left,
+            padding_right,
+            cv2.BORDER_CONSTANT,
+            value=(0, 0, 0)
+        )
+
+        # Create the translation matrix
         translation_matrix = np.float32([[1, 0, tx], [0, 1, ty]])
-        # Translate the image
-        translated_img = cv2.warpAffine(img, translation_matrix, (img.shape[1], img.shape[0]),
-                                        borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0))
+
+        # Translate the padded image within its new dimensions
+        translated_img = cv2.warpAffine(
+            padded_img,
+            translation_matrix,
+            (padded_img.shape[1], padded_img.shape[0]),
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=(0, 0, 0)
+        )
+
         return translated_img
 
-    # First, calculate the size of the largest translated image
+    # Process and translate each image with the required padding
     translated_images = []
-    for idx in range(len(images)):
-        img = original_images[idx]
-        focus_point = focus_points[idx]
+    for idx, (img, (tx, ty)) in enumerate(zip(original_images, translations)):
+        padded_translated_img = pad_and_translate_image(img, tx, ty)
+        translated_images.append(padded_translated_img)
 
-        # Translate the image so the focus point aligns with the target focus point
-        translated_img = translate_image(img, focus_point, target_focus_point)
+    # Ensure all images are the same size by padding them to the maximum width and height
+    pad_images_to_same_size(translated_images, output_dir)
 
-        # Store the translated image
-        translated_images.append(translated_img)
 
-    def pad_image(img, max_width, max_height):
+def pad_images_to_same_size(images, output_dir):
+    # Find the maximum width and height among all images
+    max_width = max(image.shape[1] for image in images)
+    max_height = max(image.shape[0] for image in images)
+
+    # Function to pad an image to the target size by adding padding only to the right and bottom
+    def pad_to_size(img, target_width, target_height):
         height, width = img.shape[:2]
-        top = bottom = left = right = 0
+        pad_bottom = target_height - height
+        pad_right = target_width - width
 
-        # Calculate padding
-        if width < max_width:
-            right = max_width - width
-        if height < max_height:
-            bottom = max_height - height
+        # Pad the image only to the right and bottom
+        padded_img = cv2.copyMakeBorder(
+            img,
+            0,            # top padding
+            pad_bottom,   # bottom padding
+            0,            # left padding
+            pad_right,    # right padding
+            cv2.BORDER_CONSTANT,
+            value=(0, 0, 0)
+        )
 
-        # Pad the image
-        padded_img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(0, 0, 0))
         return padded_img
 
-    # Set the target size to the largest dimensions found
-    max_width = max(img.shape[1] for img in translated_images)
-    max_height = max(img.shape[0] for img in translated_images)
+    # Pad each image to the maximum width and height and save them
+    for idx, img in enumerate(images):
+        padded_img = pad_to_size(img, max_width, max_height)
+        cv2.imwrite(os.path.join(output_dir, f'translated_image_{idx + 1}.png'), padded_img)
 
-    # Save the padded translated images
-    for idx, img in enumerate(translated_images):
-        padded_frame = pad_image(img, max_width, max_height)
-        # padded_frame = img
-        cv2.imwrite(os.path.join(output_dir, f'translated_image_{idx + 1}.png'), padded_frame)
-
-    print(f'Translated and padded images saved to "{output_dir}"')
+    print(f'Final padded images saved to \"{output_dir}\"')
 
 
 if __name__ == '__main__':
-    focus_points = [(1265, 1025), (1290, 1030), (1300, 1015), (1340, 1025)]
+    focus_points = [(2025, 1060), (2036, 1054), (2070, 1033), (2087, 1025)]
     translate_image_to_focus_point(focus_points)
