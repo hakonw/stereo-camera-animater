@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1, auto=True):
+def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1, auto=True, visualize=True):
     # Load the image (grayscale)
     image = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
     original_image = cv2.imread(image_name)
@@ -33,8 +33,6 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
         return np.sum(box)
 
     if auto:
-        # THIS HERE IS WRONG!
-        # Need to be  [ | | | ]
         seed_points.append((int(w * (1 / 8)), int(h / 2)))
         seed_points.append((int(w * (3 / 8)), int(h / 2)))
         seed_points.append((int(w * (5 / 8)), int(h / 2)))
@@ -123,14 +121,14 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
                 raise ValueError(f"Error: Box width {box_width} exceeds 30% of the total image width!")
 
             # Visualization: only update every 5th step
-            if step_count % 5 == 0:
+            if visualize and step_count % 10 == 0:
                 temp_image = image.copy()
                 cv2.rectangle(temp_image, (left, top), (right, bottom), (255, 0, 0), 10)  # Thicker blue rectangle
 
                 # Resize the temporary image for display
                 temp_image_display = cv2.resize(temp_image, (int(w * scale_factor), int(h * scale_factor)))
                 cv2.imshow('Finding Boxes', temp_image_display)
-                cv2.waitKey(50)  # Add small delay for visualization
+                cv2.waitKey(25)  # Add small delay for visualization
 
         # Save the best box found
         best_box = (left, top, right - left, bottom - top)

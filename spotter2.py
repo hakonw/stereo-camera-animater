@@ -66,10 +66,14 @@ def find_points(show_results=False, debug=False):
     y_start, y_end = max(0, y - roi_size // 2), min(h, y + roi_size // 2)
     roi = images[0][y_start:y_end, x_start:x_end]
 
+    # cv2.imshow('ROI', roi)
+    # cv2.waitKey(0)
+
     if debug:
         cv2.circle(original_images[0], (x, y), 5, (0, 0, 255), -1)
         cv2.rectangle(original_images[0], (x - roi_size // 2, y - roi_size // 2),
                       (x + roi_size // 2, y + roi_size // 2), (0, 255, 0), 10)
+        # Write over the splitted image with the ROI
         cv2.imwrite(f'splitted/image_1.png', original_images[0])
 
     # Initialize list to store match results

@@ -2,10 +2,9 @@ import cv2
 import os
 
 # Parameters
-def make_vid():
+def make_vid(output_video='output_video.avi'):
     image_folder = 'translated'
-    output_video = 'output_video.avi'
-    frame_duration = 3  # Number of frames to display each image
+    frame_duration = 4  # Number of frames to display each image
     loop_count = 5      # Number of times to loop the sequence
     fps = 24            # Frames per second for the video
     frame_sequence = [0, 1, 2, 3, 2, 1]  # Image indices for the sequence (0-based)
