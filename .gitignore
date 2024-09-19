@@ -3,8 +3,9 @@
 *.avi
 
 # Folders
-.idea
-old
-splitted
-translated
+.idea/
+old/
+splitted/
+spotted/
+translated/
 __pycache__/

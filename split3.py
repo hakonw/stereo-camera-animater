@@ -18,12 +18,12 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
     image_display = cv2.resize(image, (int(w * scale_factor), int(h * scale_factor)))
 
     # Initialize variables
-    grow_step = 10  # how much to grow per iteration
+    grow_step = 15  # how much to grow per iteration
     seed_points = []  # list to store clicked points
     max_boxes = 4
 
     # Threshold for stopping expansion (adjustable)
-    darkness_threshold = 1000  # This threshold defines how much pixel intensity change is needed to keep growing
+    darkness_threshold = 2000  # This threshold defines how much pixel intensity change is needed to keep growing
 
     # Box size limit (30% of the image width)
     box_size_limit = 0.3 * w  # 30% of the total image width
@@ -141,7 +141,7 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
     # Save or display the results from the original image (do not mask white anymore)
     for idx, (x_start, y_start, box_w, box_h) in enumerate(boxes):
         extracted_img = original_image[y_start:y_start + box_h, x_start:x_start + box_w]
-        cv2.imwrite(os.path.join(output_dir,f'image_{idx + 1}.jpg'), extracted_img)
+        cv2.imwrite(os.path.join(output_dir,f'image_{idx + 1}.png'), extracted_img)
 
 
 if __name__ == '__main__':

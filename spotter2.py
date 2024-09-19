@@ -13,7 +13,7 @@ def check_difference(points):
 
 def find_points(show_results=False, debug=False):
     # Load the 4 extracted images
-    images = [cv2.imread(f'splitted/image_{i + 1}.jpg') for i in range(4)]
+    images = [cv2.imread(f'splitted/image_{i + 1}.png') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
 
     # Get dimensions of the first image
@@ -55,7 +55,7 @@ def find_points(show_results=False, debug=False):
     cv2.waitKey(0)
 
     # Write to spotted for debugging
-    cv2.imwrite(f'spotted/result_image_0.jpg', resized_images[0])
+    cv2.imwrite(f'spotted/result_image_0.png', resized_images[0])
 
     if selected_point is None:
         raise Exception("No point selected")
@@ -70,7 +70,7 @@ def find_points(show_results=False, debug=False):
         cv2.circle(original_images[0], (x, y), 5, (0, 0, 255), -1)
         cv2.rectangle(original_images[0], (x - roi_size // 2, y - roi_size // 2),
                       (x + roi_size // 2, y + roi_size // 2), (0, 255, 0), 10)
-        cv2.imwrite(f'splitted/image_1.jpg', original_images[0])
+        cv2.imwrite(f'splitted/image_1.png', original_images[0])
 
     # Initialize list to store match results
     match_results = []
@@ -103,9 +103,9 @@ def find_points(show_results=False, debug=False):
             cv2.imshow(f'Result Image {i + 1}', result_image)
 
         # Save the result image to 'spotted/' directory
-        cv2.imwrite(f'spotted/result_image_{i + 1}.jpg', original_images[i])
+        cv2.imwrite(f'spotted/result_image_{i + 1}.png', original_images[i])
         if debug:
-            cv2.imwrite(f'splitted/image_{i + 1}.jpg', original_images[i])
+            cv2.imwrite(f'splitted/image_{i + 1}.png', original_images[i])
 
     if show_results:
         cv2.waitKey(0)

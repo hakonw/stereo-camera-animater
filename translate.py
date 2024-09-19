@@ -9,13 +9,15 @@ def translate_image_to_focus_point(focus_points):
     os.makedirs(output_dir, exist_ok=True)
 
     # Load the 4 extracted images
-    images = [cv2.imread(f'splitted/image_{i + 1}.jpg') for i in range(4)]
+    images = [cv2.imread(f'splitted/image_{i + 1}.png') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
 
     # Define the target focus point (use the first focus point)
     target_focus_point = focus_points[0]
 
     # Function to translate the image
+    # TODO BILDE MÅ IKKE CROPPES ;/ må heller padde alle andre..
+    # Må kanskje regne ut det da... og padde før flytte
     def translate_image(img, focus_point, target_point):
         tx = target_point[0] - focus_point[0]
         ty = target_point[1] - focus_point[1]
@@ -59,7 +61,7 @@ def translate_image_to_focus_point(focus_points):
     for idx, img in enumerate(translated_images):
         padded_frame = pad_image(img, max_width, max_height)
         # padded_frame = img
-        cv2.imwrite(os.path.join(output_dir, f'translated_image_{idx + 1}.jpg'), padded_frame)
+        cv2.imwrite(os.path.join(output_dir, f'translated_image_{idx + 1}.png'), padded_frame)
 
     print(f'Translated and padded images saved to "{output_dir}"')
 

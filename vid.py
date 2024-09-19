@@ -11,7 +11,7 @@ def make_vid():
     frame_sequence = [0, 1, 2, 3, 2, 1]  # Image indices for the sequence (0-based)
 
     # Load images
-    image_files = [os.path.join(image_folder, f'translated_image_{i + 1}.jpg') for i in range(4)]
+    image_files = [os.path.join(image_folder, f'translated_image_{i + 1}.png') for i in range(4)]
     images = [cv2.imread(img_file) for img_file in image_files]
 
     # Check if images are loaded correctly
