@@ -3,6 +3,7 @@ import os
 
 # Parameters
 def make_vid(output_video='output_video.avi'):
+    print(f"Creating video: {output_video}")
     image_folder = 'translated'
     frame_duration = 4  # Number of frames to display each image
     loop_count = 5      # Number of times to loop the sequence

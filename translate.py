@@ -4,6 +4,7 @@ import os
 
 
 def translate_image_to_focus_point(focus_points):
+    print("Padding and translating images to focus points...")
     # Ensure the output directory exists
     output_dir = 'translated'
     os.makedirs(output_dir, exist_ok=True)
@@ -108,5 +109,5 @@ def pad_images_to_same_size(images, output_dir):
 
 
 if __name__ == '__main__':
-    focus_points = [(2025, 1060), (2036, 1054), (2070, 1033), (2087, 1025)]
-    translate_image_to_focus_point(focus_points)
+    focus_points_data = [(2025, 1060), (2036, 1054), (2070, 1033), (2087, 1025)]
+    translate_image_to_focus_point(focus_points_data)

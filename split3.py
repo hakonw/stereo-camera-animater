@@ -5,6 +5,7 @@ import os
 
 def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1, auto=True, visualize=True):
     # Load the image (grayscale)
+    print(f"Splitting image: {image_name}")
     image = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
     original_image = cv2.imread(image_name)
 
@@ -140,7 +141,7 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
     for idx, (x_start, y_start, box_w, box_h) in enumerate(boxes):
         extracted_img = original_image[y_start:y_start + box_h, x_start:x_start + box_w]
         cv2.imwrite(os.path.join(output_dir,f'image_{idx + 1}.png'), extracted_img)
-
+    print(f"Saved {len(boxes)} boxes to {output_dir}")
 
 if __name__ == '__main__':
     split_image()

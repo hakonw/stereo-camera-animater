@@ -50,12 +50,13 @@ def find_points(show_results=False, debug=False):
             cv2.imshow('Image 1', resized_images[0])
 
     # Display the first resized image and select a point
+    print("Select the focus point and press any key")
     cv2.imshow('Image 1', resized_images[0])
     cv2.setMouseCallback('Image 1', select_point)
     cv2.waitKey(0)
 
     # Write to spotted for debugging
-    cv2.imwrite(f'spotted/result_image_0.png', resized_images[0])
+    cv2.imwrite(f'spotted/result_image_1.png', resized_images[0])
 
     if selected_point is None:
         raise Exception("No point selected")
@@ -115,8 +116,7 @@ def find_points(show_results=False, debug=False):
         cv2.waitKey(0)
 
     # Print all focus points in the required list format
-    print("Focus points for all images:")
-    print(focus_points)
+    print(f"Focus points for all images: {focus_points}")
 
     cv2.destroyAllWindows()
 

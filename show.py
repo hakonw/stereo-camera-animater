@@ -1,6 +1,8 @@
 import cv2
 
+# frame_ms is a lie, and depends on hardware
 def play_video(video_path, scale_factor, frame_ms):
+    print(f"Playing video {video_path}. Press 'q' to quit.")
     while True:
         # Open the video file
         cap = cv2.VideoCapture(video_path)
@@ -23,10 +25,13 @@ def play_video(video_path, scale_factor, frame_ms):
             cv2.imshow('Video', frame)
 
             # Exit if the user presses the 'q' key
-            if cv2.waitKey(frame_ms) & 0xFF == ord('q'):
+            key = cv2.waitKey(frame_ms) & 0xFF
+            if key == ord("q") or key == ord("y") or key == ord("n"):
                 cap.release()
                 cv2.destroyAllWindows()
-                return
+
+                # return yes/no
+                return key == ord("q") or key == ord("y")
 
         # Release the video capture object to replay the video
         cap.release()
