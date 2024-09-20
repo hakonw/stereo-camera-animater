@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import os
+import config
 
 def check_difference(points):
-    max_limit = 200
+    max_limit = config.MAX_DIFFERENCE_LIMIT
     points = np.array(points)
     x_diff = np.abs(points[:, None, 0] - points[None, :, 0])
     y_diff = np.abs(points[:, None, 1] - points[None, :, 1])
@@ -13,27 +14,29 @@ def check_difference(points):
 
 def find_points(show_results=False, debug=False):
     # Load the 4 extracted images
-    images = [cv2.imread(f'splitted/image_{i + 1}.png') for i in range(4)]
+    input_dir = config.SPLIT_DIR
+    output_dir = config.SPOTTED_DIR
+    images = [cv2.imread(f'{input_dir}/image_{i + 1}.png') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
 
     # Get dimensions of the first image
     h, w, _ = images[0].shape
 
     # Scale factor for display (0.2 as per your setup)
-    scale_factor = 0.2
+    scale_factor = config.SCALE_FACTOR_SINGLE
 
     # Resize images for display
     resized_images = [cv2.resize(img, (int(w * scale_factor), int(h * scale_factor))) for img in images]
 
     # Parameters for ROI
-    roi_size = 200  # Size of the square ROI (e.g., 200px)
+    roi_size = config.ROI_SIZE  # Size of the square ROI (e.g., 200px)
     scaled_roi_size = int(roi_size * scale_factor)  # Scaled ROI size for display
 
     # Mouse callback to capture the clicked point
     selected_point = None
 
     # Create directory to save result images if it doesn't exist
-    os.makedirs('spotted', exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     def select_point(event, x, y, flags, param):
         nonlocal selected_point
@@ -56,7 +59,7 @@ def find_points(show_results=False, debug=False):
     cv2.waitKey(0)
 
     # Write to spotted for debugging
-    cv2.imwrite(f'spotted/result_image_1.png', resized_images[0])
+    cv2.imwrite(f'{output_dir}/result_image_1.png', resized_images[0])
 
     if selected_point is None:
         raise Exception("No point selected")
@@ -75,7 +78,7 @@ def find_points(show_results=False, debug=False):
         cv2.rectangle(original_images[0], (x - roi_size // 2, y - roi_size // 2),
                       (x + roi_size // 2, y + roi_size // 2), (0, 255, 0), 10)
         # Write over the splitted image with the ROI
-        cv2.imwrite(f'splitted/image_1.png', original_images[0])
+        cv2.imwrite(f'{input_dir}/image_1.png', original_images[0])
 
     # Initialize list to store match results
     match_results = []
@@ -108,9 +111,9 @@ def find_points(show_results=False, debug=False):
             cv2.imshow(f'Result Image {i + 1}', result_image)
 
         # Save the result image to 'spotted/' directory
-        cv2.imwrite(f'spotted/result_image_{i + 1}.png', original_images[i])
+        cv2.imwrite(f'{output_dir}/result_image_{i + 1}.png', original_images[i])
         if debug:
-            cv2.imwrite(f'splitted/image_{i + 1}.png', original_images[i])
+            cv2.imwrite(f'{input_dir}/image_{i + 1}.png', original_images[i])
 
     if show_results:
         cv2.waitKey(0)

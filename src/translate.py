@@ -1,16 +1,17 @@
 import cv2
 import numpy as np
 import os
-
+import config
 
 def translate_image_to_focus_point(focus_points):
     print("Padding and translating images to focus points...")
     # Ensure the output directory exists
-    output_dir = 'translated'
+    input_dir = config.SPLIT_DIR
+    output_dir = config.TRANSLATED_DIR
     os.makedirs(output_dir, exist_ok=True)
 
     # Load the 4 extracted images
-    images = [cv2.imread(f'splitted/image_{i + 1}.png') for i in range(4)]
+    images = [cv2.imread(f'{input_dir}/image_{i + 1}.png') for i in range(4)]
     original_images = [img.copy() for img in images]  # Keep a copy of the original images
 
     # Define the target focus point (use the first focus point)

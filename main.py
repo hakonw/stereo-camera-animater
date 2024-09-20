@@ -1,11 +1,7 @@
 import typer
 
-import show
-import split3
-import spotter2
-import translate
-import vid
-
+from src import show, spotter2, split3, vid, translate
+import config
 
 def main(image_path: str = "bilde.jpg"):
     split3.split_image(image_name=image_path, visualize=True)
@@ -15,8 +11,8 @@ def main(image_path: str = "bilde.jpg"):
         raise Exception("Generated focus points are too far apart")
 
     translate.translate_image_to_focus_point(focus_points)
-    vid.make_vid()
-    show.play_video("output_video.avi", scale_factor=0.2, frame_ms=30)
+    vid.make_vid(name="output_video.avi")
+    show.play_video(config.OUTPUT_VIDEO_PATH + "/" + "output_video.avi")
 
 
 if __name__ == '__main__':

@@ -1,11 +1,16 @@
 import cv2
 import numpy as np
 import os
+import config
 
 
-def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1, auto=True, visualize=True):
+
+def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     # Load the image (grayscale)
     print(f"Splitting image: {image_name}")
+    output_dir = config.SPLIT_DIR
+    scale_factor = config.SCALE_FACTOR
+
     image = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
     original_image = cv2.imread(image_name)
 
@@ -15,19 +20,20 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
     # Scale factor for display
     os.makedirs(output_dir, exist_ok=True)
 
+
+    # Initialize variables
+    grow_step = config.GROW_STEP
+    seed_points = []  # list to store clicked points
+    max_boxes = 4 # hardcoded for now
+
+    # Threshold for stopping expansion (adjustable)
+    darkness_threshold = config.DARKNESS_THRESHOLD  # This threshold defines how much pixel intensity change is needed to keep growing
+
     # Resize the image for display
     image_display = cv2.resize(image, (int(w * scale_factor), int(h * scale_factor)))
 
-    # Initialize variables
-    grow_step = 15  # how much to grow per iteration
-    seed_points = []  # list to store clicked points
-    max_boxes = 4
-
-    # Threshold for stopping expansion (adjustable)
-    darkness_threshold = 2000  # This threshold defines how much pixel intensity change is needed to keep growing
-
-    # Box size limit (30% of the image width)
-    box_size_limit = 0.3 * w  # 30% of the total image width
+    # Box size limit
+    box_size_limit = config.BOX_SIZE_LIMIT_RATIO * w
 
     # Function to calculate darkness (sum of pixel intensities)
     def calculate_darkness(box):
@@ -142,6 +148,3 @@ def split_image(image_name="bilde.jpg", output_dir="splitted", scale_factor=0.1,
         extracted_img = original_image[y_start:y_start + box_h, x_start:x_start + box_w]
         cv2.imwrite(os.path.join(output_dir,f'image_{idx + 1}.png'), extracted_img)
     print(f"Saved {len(boxes)} boxes to {output_dir}")
-
-if __name__ == '__main__':
-    split_image()

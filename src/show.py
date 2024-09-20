@@ -1,7 +1,12 @@
 import cv2
 
+import config
+
+
 # frame_ms is a lie, and depends on hardware
-def play_video(video_path, scale_factor, frame_ms):
+def play_video(video_path):
+    scale_factor = config.SCALE_FACTOR_PLAYBACK
+    frame_ms = config.PLAYBACK_FRAME_MS_PSEUDO
     print(f"Playing video {video_path}. Press 'q' to quit.")
     while True:
         # Open the video file
@@ -35,6 +40,3 @@ def play_video(video_path, scale_factor, frame_ms):
 
         # Release the video capture object to replay the video
         cap.release()
-
-if __name__ == '__main__':
-    play_video("output_video.avi", scale_factor=0.2, frame_ms=30)

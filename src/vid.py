@@ -1,14 +1,16 @@
 import cv2
 import os
+import config
 
 # Parameters
-def make_vid(output_video='output_video.avi'):
+def make_vid(name='output_video.avi'):
+    output_video = os.path.join(config.OUTPUT_VIDEO_PATH, name)
     print(f"Creating video: {output_video}")
-    image_folder = 'translated'
-    frame_duration = 4  # Number of frames to display each image
-    loop_count = 5      # Number of times to loop the sequence
-    fps = 24            # Frames per second for the video
-    frame_sequence = [0, 1, 2, 3, 2, 1]  # Image indices for the sequence (0-based)
+    image_folder = config.TRANSLATED_DIR
+    frame_duration = config.FRAME_DURATION
+    loop_count = config.LOOP_COUNT
+    fps = config.FPS
+    frame_sequence = config.FRAME_SEQUENCE
 
     # Load images
     image_files = [os.path.join(image_folder, f'translated_image_{i + 1}.png') for i in range(4)]
