@@ -9,14 +9,16 @@ OUTPUT_VIDEO_PATH = f"{OUTPUT_DIR}"  # Path for the generated video
 
 # Image Processing
 SCALE_FACTOR = 0.1  # Scale factor for image resizing during display
-GROW_STEP = 15  # Grow step for image splitting
+GROW_STEP = 10  # Grow step for image splitting
 DARKNESS_THRESHOLD = 2000  # Threshold for growing boxes
 BOX_SIZE_LIMIT_RATIO = 0.3  # Maximum box size limit as a ratio of the image width
+BOX_SIZE_UPPER_LIMIT_RATIO = 0.3  # Maximum box size limit as a ratio of the image width
+BOX_SIZE_LOWER_LIMIT_RATIO = 0.18
 
 # Focus Points Detection
 SCALE_FACTOR_SINGLE = 0.2  # Scale factor for image resizing during display
 ROI_SIZE = 200  # Size of the ROI for focus point detection in px
-MAX_DIFFERENCE_LIMIT = 200  # Maximum allowed difference between focus points
+MAX_DIFFERENCE_LIMIT = 400  # Maximum allowed difference between focus points
 
 # Video Creation
 FRAME_DURATION = 4  # Number of frames each image will display in the video

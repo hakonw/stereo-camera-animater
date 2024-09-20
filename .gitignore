@@ -1,6 +1,7 @@
 # Files
 *.jpg
 *.avi
+*.png
 
 # Folders
 .idea/

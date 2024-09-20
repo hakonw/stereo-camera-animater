@@ -13,7 +13,10 @@ def check_difference(points):
     y_diff = np.abs(points[:, None, 1] - points[None, :, 1])
 
     over_limit = (x_diff > max_limit) | (y_diff > max_limit)
-    return np.any(over_limit)
+    over = np.any(over_limit)
+    if over:
+        print(f"Generated focus points are too far apart, {over_limit}")
+    return over
 
 
 def find_points(show_results=False, debug=False):

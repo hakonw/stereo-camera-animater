@@ -6,8 +6,7 @@ import config
 from src import show, spotter2, split3, vid, translate
 
 
-def main(image_path: str = "bilde.jpg", visualize_split: bool = True, debug: bool = False,
-         output_video: str = "output_video.avi"):
+def main(image_path: str = "bilde.jpg", visualize_split: bool = True, debug: bool = False, output_video: str = "output_video.avi"):
     split3.split_image(image_name=image_path, visualize=visualize_split)
     focus_points = spotter2.find_points(debug=debug)
 

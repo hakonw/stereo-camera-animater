@@ -33,7 +33,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     image_display = cv2.resize(image, (int(w * scale_factor), int(h * scale_factor)))
 
     # Box size limit
-    box_size_limit = config.BOX_SIZE_LIMIT_RATIO * w
+    box_size_limit = config.BOX_SIZE_UPPER_LIMIT_RATIO * w
 
     # Function to calculate darkness (sum of pixel intensities)
     def calculate_darkness(box):
@@ -136,6 +136,9 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
 
         # Save the best box found
         best_box = (left, top, right - left, bottom - top)
+        if best_box[2] < config.BOX_SIZE_LOWER_LIMIT_RATIO * w or best_box[3] < config.BOX_SIZE_LOWER_LIMIT_RATIO * h:
+            raise ValueError(f"Error: Box  undershoots {config.BOX_SIZE_LOWER_LIMIT_RATIO} of the total image width!")
+
         boxes.append(best_box)
 
     cv2.destroyAllWindows()
