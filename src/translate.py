@@ -1,7 +1,10 @@
+import os
+
 import cv2
 import numpy as np
-import os
+
 import config
+
 
 def translate_image_to_focus_point(focus_points):
     print("Padding and translating images to focus points...")
@@ -91,10 +94,10 @@ def pad_images_to_same_size(images, output_dir):
         # Pad the image only to the right and bottom
         padded_img = cv2.copyMakeBorder(
             img,
-            0,            # top padding
-            pad_bottom,   # bottom padding
-            0,            # left padding
-            pad_right,    # right padding
+            0,  # top padding
+            pad_bottom,  # bottom padding
+            0,  # left padding
+            pad_right,  # right padding
             cv2.BORDER_CONSTANT,
             value=(0, 0, 0)
         )
@@ -107,8 +110,3 @@ def pad_images_to_same_size(images, output_dir):
         cv2.imwrite(os.path.join(output_dir, f'translated_image_{idx + 1}.png'), padded_img)
 
     print(f'Final padded images saved to \"{output_dir}\"')
-
-
-if __name__ == '__main__':
-    focus_points_data = [(2025, 1060), (2036, 1054), (2070, 1033), (2087, 1025)]
-    translate_image_to_focus_point(focus_points_data)

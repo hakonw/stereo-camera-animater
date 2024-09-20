@@ -1,7 +1,10 @@
+import os
+
 import cv2
 import numpy as np
-import os
+
 import config
+
 
 def check_difference(points):
     max_limit = config.MAX_DIFFERENCE_LIMIT
@@ -11,6 +14,7 @@ def check_difference(points):
 
     over_limit = (x_diff > max_limit) | (y_diff > max_limit)
     return np.any(over_limit)
+
 
 def find_points(show_results=False, debug=False):
     # Load the 4 extracted images
@@ -124,6 +128,3 @@ def find_points(show_results=False, debug=False):
     cv2.destroyAllWindows()
 
     return focus_points
-
-if __name__ == '__main__':
-    find_points()

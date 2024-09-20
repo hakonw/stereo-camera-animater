@@ -1,8 +1,9 @@
+import os
+
 import cv2
 import numpy as np
-import os
-import config
 
+import config
 
 
 def split_image(image_name="bilde.jpg", auto=True, visualize=True):
@@ -20,11 +21,10 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     # Scale factor for display
     os.makedirs(output_dir, exist_ok=True)
 
-
     # Initialize variables
     grow_step = config.GROW_STEP
     seed_points = []  # list to store clicked points
-    max_boxes = 4 # hardcoded for now
+    max_boxes = 4  # hardcoded for now
 
     # Threshold for stopping expansion (adjustable)
     darkness_threshold = config.DARKNESS_THRESHOLD  # This threshold defines how much pixel intensity change is needed to keep growing
@@ -69,10 +69,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     boxes = []
 
     for (x_seed, y_seed) in seed_points:
-        x_start = x_seed
-        y_start = y_seed
         box_size = 50  # initial box size
-        best_box = None
 
         # Initialize box edges
         left, right = x_seed, x_seed + box_size
@@ -146,5 +143,5 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     # Save or display the results from the original image (do not mask white anymore)
     for idx, (x_start, y_start, box_w, box_h) in enumerate(boxes):
         extracted_img = original_image[y_start:y_start + box_h, x_start:x_start + box_w]
-        cv2.imwrite(os.path.join(output_dir,f'image_{idx + 1}.png'), extracted_img)
+        cv2.imwrite(os.path.join(output_dir, f'image_{idx + 1}.png'), extracted_img)
     print(f"Saved {len(boxes)} boxes to {output_dir}")

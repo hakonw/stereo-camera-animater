@@ -1,6 +1,9 @@
-import cv2
 import os
+
+import cv2
+
 import config
+
 
 # Parameters
 def make_vid(name='output_video.avi'):
@@ -39,6 +42,3 @@ def make_vid(name='output_video.avi'):
     video_writer.release()
 
     print(f'Video saved as {output_video}')
-
-if __name__ == '__main__':
-    make_vid()
