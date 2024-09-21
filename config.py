@@ -10,10 +10,11 @@ OUTPUT_VIDEO_PATH = f"{OUTPUT_DIR}"  # Path for the generated video
 # Image Processing
 SCALE_FACTOR = 0.1  # Scale factor for image resizing during display
 GROW_STEP = 10  # Grow step for image splitting
-DARKNESS_THRESHOLD = 2000  # Threshold for growing boxes
+DARKNESS_THRESHOLD = 10  # Upper pixel intensity to count a pixel as dark
+DARKNESS_THRESHOLD_RATIO = 0.95  # Pixel amount threshold for calling a new slice as black
 BOX_SIZE_LIMIT_RATIO = 0.3  # Maximum box size limit as a ratio of the image width
 BOX_SIZE_UPPER_LIMIT_RATIO = 0.3  # Maximum box size limit as a ratio of the image width
-BOX_SIZE_LOWER_LIMIT_RATIO = 0.18
+BOX_SIZE_LOWER_LIMIT_RATIO = 0.18 # Too small of a box
 
 # Focus Points Detection
 SCALE_FACTOR_SINGLE = 0.2  # Scale factor for image resizing during display

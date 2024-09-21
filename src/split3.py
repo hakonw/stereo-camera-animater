@@ -1,10 +1,7 @@
 import os
-
 import cv2
 import numpy as np
-
 import config
-
 
 def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     # Load the image (grayscale)
@@ -35,9 +32,10 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
     # Box size limit
     box_size_limit = config.BOX_SIZE_UPPER_LIMIT_RATIO * w
 
-    # Function to calculate darkness (sum of pixel intensities)
-    def calculate_darkness(box):
-        return np.sum(box)
+    # Function to calculate darkness (checks if 90% of the pixels are below the darkness threshold)
+    def is_dark(box):
+        over_limit = np.sum(box < darkness_threshold) / box.size
+        return over_limit >= config.DARKNESS_THRESHOLD_RATIO
 
     if auto:
         seed_points.append((int(w * (1 / 8)), int(h / 2)))
@@ -87,8 +85,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
             if right + grow_step < w:
                 new_right = right + grow_step
                 new_box = image[top:bottom, right:new_right]  # Check the area to the right
-                darkness_diff = calculate_darkness(new_box)
-                if darkness_diff > darkness_threshold:  # If difference is significant, keep growing
+                if not is_dark(new_box):
                     right = new_right
                     growing = True
 
@@ -96,8 +93,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
             if bottom + grow_step < h:
                 new_bottom = bottom + grow_step
                 new_box = image[bottom:new_bottom, left:right]  # Check the area below
-                darkness_diff = calculate_darkness(new_box)
-                if darkness_diff > darkness_threshold:
+                if not is_dark(new_box):
                     bottom = new_bottom
                     growing = True
 
@@ -105,8 +101,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
             if left - grow_step >= 0:
                 new_left = left - grow_step
                 new_box = image[top:bottom, new_left:left]  # Check the area to the left
-                darkness_diff = calculate_darkness(new_box)
-                if darkness_diff > darkness_threshold:
+                if not is_dark(new_box):
                     left = new_left
                     growing = True
 
@@ -114,8 +109,7 @@ def split_image(image_name="bilde.jpg", auto=True, visualize=True):
             if top - grow_step >= 0:
                 new_top = top - grow_step
                 new_box = image[new_top:top, left:right]  # Check the area above
-                darkness_diff = calculate_darkness(new_box)
-                if darkness_diff > darkness_threshold:
+                if not is_dark(new_box):
                     top = new_top
                     growing = True
 
